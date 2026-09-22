@@ -1,4 +1,13 @@
-(()=>{const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
+(()=>{const $=(s,c=document)=>c.querySelector(s),$=(s,c=document)=>[...c.querySelectorAll(s)];
+
+/* THEME PERSISTENCE */
+const root=document.documentElement;
+const storedTheme=localStorage.getItem("portfolio-theme");
+root.dataset.theme=storedTheme==="dark"?"dark":"light";
+const themeBtn=$("#themeBtn");
+const syncTheme=()=>{if(!themeBtn)return;const dark=root.dataset.theme==="dark";const s=themeBtn.querySelector(".theme-symbol"),t=themeBtn.querySelector(".theme-text");if(s)s.textContent=dark?"☀":"☾";if(t)t.textContent=dark?"Light":"Dark";themeBtn.setAttribute("aria-label",dark?"Switch to light theme":"Switch to dark theme");};
+syncTheme();
+if(themeBtn)themeBtn.onclick=()=>{root.dataset.theme=root.dataset.theme==="dark"?"light":"dark";localStorage.setItem("portfolio-theme",root.dataset.theme);syncTheme();};
 
 const menu=$("#menuBtn"),mobile=$("#mobileMenu");
 if(menu&&mobile)menu.onclick=()=>{mobile.classList.toggle("open");menu.setAttribute("aria-expanded",mobile.classList.contains("open"))};
@@ -59,12 +68,12 @@ if(c&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
       k?ctx.lineTo(px,py):ctx.moveTo(px,py);
     }
     ctx.closePath();
-    ctx.strokeStyle=`rgba(90,240,223,${alpha})`;
+    ctx.strokeStyle=root.dataset.theme==="dark"?`rgba(90,240,223,${alpha})`:`rgba(39,100,255,${Math.min(.32,alpha*1.22)})`;
     ctx.lineWidth=.65*dpr; ctx.stroke();
   }
 
   function dendrite(cr,alpha){
-    ctx.strokeStyle=`rgba(157,130,255,${alpha})`;
+    ctx.strokeStyle=root.dataset.theme==="dark"?`rgba(157,130,255,${alpha})`:`rgba(104,82,220,${Math.min(.30,alpha*1.18)})`;
     ctx.lineWidth=.65*dpr;
     for(let k=0;k<6;k++){
       const ang=cr.angle+k*Math.PI/3;
@@ -92,7 +101,7 @@ if(c&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
       p.x+=p.vx*dt*speed;p.y+=p.vy*dt*speed;
       p.vx+=rnd(-.004,.004)*dpr;p.vy+=rnd(-.004,.004)*dpr;
       if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;
-      ctx.fillStyle=mode===0?"rgba(90,240,223,.10)":"rgba(157,130,255,.11)";
+      ctx.fillStyle=root.dataset.theme==="dark"?(mode===0?"rgba(90,240,223,.10)":"rgba(157,130,255,.11)"):(mode===0?"rgba(39,100,255,.105)":"rgba(104,82,220,.10)");
       ctx.beginPath();ctx.arc(p.x,p.y,1.0*dpr,0,TAU);ctx.fill();
     }
 
