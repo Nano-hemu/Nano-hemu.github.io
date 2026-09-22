@@ -1,138 +1,30 @@
-(()=>{const $=(s,c=document)=>c.querySelector(s),$=(s,c=document)=>[...c.querySelectorAll(s)];
+(()=>{
+  const $=(s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
+  const root=document.documentElement;
+  const saved=localStorage.getItem('theme'); if(saved) root.dataset.theme=saved;
+  const themeBtn=$('#themeBtn');
+  const syncThemeIcon=()=>{ if(themeBtn) themeBtn.textContent=root.dataset.theme==='dark'?'☀':'◐'; };
+  syncThemeIcon();
+  if(themeBtn) themeBtn.addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',root.dataset.theme);syncThemeIcon();});
+  const menuBtn=$('#menuBtn'),mobile=$('#mobileMenu');
+  if(menuBtn&&mobile) menuBtn.addEventListener('click',()=>mobile.classList.toggle('open'));
+  const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.12});
+  $$('.reveal').forEach(el=>io.observe(el));
+  $$('[data-count]').forEach(el=>{let started=false,target=+el.dataset.count,suffix=el.dataset.suffix||'',dec=+(el.dataset.decimals||0);const o=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting||started)return;started=true;const s=performance.now(),dur=1000;const tick=t=>{const p=Math.min(1,(t-s)/dur),v=target*(1-Math.pow(1-p,3));el.textContent=v.toFixed(dec)+suffix;if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick);o.disconnect()}),{threshold:.55});o.observe(el)});
+  const filters=$$('.filter'),projects=$$('.project[data-category]');
+  filters.forEach(btn=>btn.addEventListener('click',()=>{filters.forEach(x=>x.classList.remove('active'));btn.classList.add('active');const f=btn.dataset.filter;projects.forEach(p=>p.classList.toggle('hidden',f!=='all'&&p.dataset.category!==f));}));
+  const search=$('#blogSearch'); if(search){const cards=$$('.blog-card');search.addEventListener('input',()=>{const q=search.value.toLowerCase().trim();cards.forEach(c=>c.style.display=(c.dataset.search||c.textContent).toLowerCase().includes(q)?'flex':'none')})}
 
-/* THEME PERSISTENCE */
-const root=document.documentElement;
-const storedTheme=localStorage.getItem("portfolio-theme");
-root.dataset.theme=storedTheme==="dark"?"dark":"light";
-const themeBtn=$("#themeBtn");
-const syncTheme=()=>{if(!themeBtn)return;const dark=root.dataset.theme==="dark";const s=themeBtn.querySelector(".theme-symbol"),t=themeBtn.querySelector(".theme-text");if(s)s.textContent=dark?"☀":"☾";if(t)t.textContent=dark?"Light":"Dark";themeBtn.setAttribute("aria-label",dark?"Switch to light theme":"Switch to dark theme");};
-syncTheme();
-if(themeBtn)themeBtn.onclick=()=>{root.dataset.theme=root.dataset.theme==="dark"?"light":"dark";localStorage.setItem("portfolio-theme",root.dataset.theme);syncTheme();};
-
-const menu=$("#menuBtn"),mobile=$("#mobileMenu");
-if(menu&&mobile)menu.onclick=()=>{mobile.classList.toggle("open");menu.setAttribute("aria-expanded",mobile.classList.contains("open"))};
-
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");io.unobserve(e.target)}}),{threshold:.1});
-$$(".reveal").forEach(e=>io.observe(e));
-
-const glow=$(".glow");
-if(glow&&matchMedia("(pointer:fine)").matches){
-  addEventListener("mousemove",e=>{glow.style.left=e.clientX+"px";glow.style.top=e.clientY+"px";glow.style.opacity="1"});
-  addEventListener("mouseleave",()=>glow.style.opacity="0");
-}
-
-/* Physically inspired crystallisation field.
-   Mode A: near-equilibrium, low nucleation density, subcritical nuclei dissolve,
-   surviving crystals grow slowly toward faceted six-fold forms.
-   Mode B: far-from-equilibrium, high supersaturation, rapid nucleation and
-   anisotropic/dendritic growth. This is a conceptual visual model, not a solver. */
-const c=$("#networkCanvas");
-if(c&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
-  const ctx=c.getContext("2d");
-  const label=document.createElement("div");
-  label.className="crystal-mode";
-  document.body.appendChild(label);
-
-  let w=0,h=0,dpr=1,particles=[],crystals=[],mode=0,last=performance.now(),modeT=0;
-  const TAU=Math.PI*2;
-  const rnd=(a,b)=>a+Math.random()*(b-a);
-
-  function resize(){
-    dpr=Math.min(devicePixelRatio||1,2);
-    w=c.width=innerWidth*dpr; h=c.height=innerHeight*dpr;
-    c.style.width=innerWidth+"px"; c.style.height=innerHeight+"px";
-    particles=Array.from({length:Math.min(92,Math.max(48,Math.floor(innerWidth/18)))},()=>({
-      x:Math.random()*w,y:Math.random()*h,vx:rnd(-.13,.13)*dpr,vy:rnd(-.13,.13)*dpr
-    }));
-    resetCrystals();
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const canvas=document.createElement('canvas'); canvas.className='crystal-canvas'; document.body.prepend(canvas);
+    const ctx=canvas.getContext('2d'); const modeLabel=document.createElement('div'); modeLabel.className='crystal-mode'; document.body.appendChild(modeLabel);
+    let w=0,h=0,dpr=1,pts=[],xtals=[],mode=0,last=performance.now(),elapsed=0; const tau=Math.PI*2; const rnd=(a,b)=>a+Math.random()*(b-a);
+    const isDark=()=>document.documentElement.dataset.theme==='dark';
+    function reset(){const n=mode===0?7:18;xtals=Array.from({length:n},()=>({x:rnd(.06*w,.94*w),y:rnd(.08*h,.92*h),r:rnd(1.5,mode===0?5:3)*dpr,max:rnd(mode===0?18:12,mode===0?52:34)*dpr,a:rnd(0,tau),arms:Array.from({length:6},()=>rnd(.55,1)),alive:true}));modeLabel.textContent=mode===0?'near-equilibrium · nucleation ⇄ dissolution · faceted growth':'non-equilibrium · rapid nucleation → dendritic growth';}
+    function resize(){dpr=Math.min(devicePixelRatio||1,2);w=canvas.width=innerWidth*dpr;h=canvas.height=innerHeight*dpr;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';pts=Array.from({length:Math.min(78,Math.max(38,Math.floor(innerWidth/22)))},()=>({x:Math.random()*w,y:Math.random()*h,vx:rnd(-.10,.10)*dpr,vy:rnd(-.10,.10)*dpr}));reset();}
+    function hex(c,r,alpha){ctx.beginPath();for(let k=0;k<6;k++){const ang=c.a+k*Math.PI/3,x=c.x+Math.cos(ang)*r,y=c.y+Math.sin(ang)*r;k?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.lineWidth=.6*dpr;ctx.strokeStyle=isDark()?'rgba(67,195,228,'+alpha+')':'rgba(39,100,255,'+alpha+')';ctx.stroke();}
+    function dendrite(c,alpha){ctx.strokeStyle=isDark()?'rgba(163,139,255,'+alpha+')':'rgba(120,104,230,'+alpha+')';ctx.lineWidth=.58*dpr;for(let k=0;k<6;k++){const a=c.a+k*Math.PI/3,L=c.r*c.arms[k],x2=c.x+Math.cos(a)*L,y2=c.y+Math.sin(a)*L;ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(x2,y2);ctx.stroke();const bn=Math.max(1,Math.floor(L/(16*dpr)));for(let j=1;j<=bn;j++){const t=j/(bn+1),bx=c.x+(x2-c.x)*t,by=c.y+(y2-c.y)*t,bl=Math.min(9*dpr,L*.2);for(const s of[-1,1]){const ba=a+s*Math.PI/3;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+Math.cos(ba)*bl,by+Math.sin(ba)*bl);ctx.stroke()}}}}
+    function frame(now){const dt=Math.min(32,now-last);last=now;elapsed+=dt;if(elapsed>14000){elapsed=0;mode=1-mode;reset()}ctx.clearRect(0,0,w,h);for(const p of pts){p.x+=p.vx*dt*(mode===0?.20:.48);p.y+=p.vy*dt*(mode===0?.20:.48);if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;ctx.fillStyle=isDark()?(mode===0?'rgba(67,195,228,.075)':'rgba(163,139,255,.08)'):(mode===0?'rgba(39,100,255,.07)':'rgba(120,104,230,.07)');ctx.beginPath();ctx.arc(p.x,p.y,.9*dpr,0,tau);ctx.fill()}for(const c of xtals){if(!c.alive)continue;if(mode===0){c.r+=(c.r>4.2*dpr?.0042:-.0030)*dt;if(c.r<.8*dpr){c.alive=false;continue}c.r=Math.min(c.r,c.max);hex(c,c.r,.07+Math.min(.11,c.r/(320*dpr)))}else{c.r=Math.min(c.max,c.r+.0095*dt);dendrite(c,.065+Math.min(.105,c.r/(210*dpr)))}}requestAnimationFrame(frame)}
+    resize(); addEventListener('resize',resize); requestAnimationFrame(frame);
   }
-
-  function resetCrystals(){
-    const n=mode===0?7:18;
-    crystals=Array.from({length:n},(_,i)=>({
-      x:rnd(.08*w,.92*w),y:rnd(.08*h,.92*h),
-      r:rnd(1.5,mode===0?5:3)*dpr,
-      max:rnd(mode===0?18:12,mode===0?54:34)*dpr,
-      angle:rnd(0,TAU),phase:rnd(0,TAU),
-      alive:true,arms:Array.from({length:6},()=>rnd(.55,1))
-    }));
-    label.textContent=mode===0
-      ?"THERMODYNAMIC · nucleation ⇄ dissolution · faceted growth"
-      :"NON-EQUILIBRIUM · rapid nucleation → dendritic growth";
-  }
-
-  function hex(x,y,r,a,alpha){
-    ctx.beginPath();
-    for(let k=0;k<6;k++){
-      const ang=a+k*Math.PI/3,px=x+Math.cos(ang)*r,py=y+Math.sin(ang)*r;
-      k?ctx.lineTo(px,py):ctx.moveTo(px,py);
-    }
-    ctx.closePath();
-    ctx.strokeStyle=root.dataset.theme==="dark"?`rgba(90,240,223,${alpha})`:`rgba(39,100,255,${Math.min(.32,alpha*1.22)})`;
-    ctx.lineWidth=.65*dpr; ctx.stroke();
-  }
-
-  function dendrite(cr,alpha){
-    ctx.strokeStyle=root.dataset.theme==="dark"?`rgba(157,130,255,${alpha})`:`rgba(104,82,220,${Math.min(.30,alpha*1.18)})`;
-    ctx.lineWidth=.65*dpr;
-    for(let k=0;k<6;k++){
-      const ang=cr.angle+k*Math.PI/3;
-      const L=cr.r*cr.arms[k];
-      const x2=cr.x+Math.cos(ang)*L,y2=cr.y+Math.sin(ang)*L;
-      ctx.beginPath();ctx.moveTo(cr.x,cr.y);ctx.lineTo(x2,y2);ctx.stroke();
-      const branches=Math.max(1,Math.floor(L/(15*dpr)));
-      for(let j=1;j<=branches;j++){
-        const t=j/(branches+1),bx=cr.x+(x2-cr.x)*t,by=cr.y+(y2-cr.y)*t,bl=Math.min(10*dpr,L*.22);
-        for(const s of [-1,1]){
-          const ba=ang+s*Math.PI/3;
-          ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+Math.cos(ba)*bl,by+Math.sin(ba)*bl);ctx.stroke();
-        }
-      }
-    }
-  }
-
-  function frame(now){
-    const dt=Math.min(32,now-last); last=now; modeT+=dt;
-    if(modeT>14500){modeT=0;mode=1-mode;resetCrystals();label.classList.remove("pulse");void label.offsetWidth;label.classList.add("pulse");}
-    ctx.clearRect(0,0,w,h);
-
-    const speed=mode===0?.23:.62;
-    for(const p of particles){
-      p.x+=p.vx*dt*speed;p.y+=p.vy*dt*speed;
-      p.vx+=rnd(-.004,.004)*dpr;p.vy+=rnd(-.004,.004)*dpr;
-      if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;
-      ctx.fillStyle=root.dataset.theme==="dark"?(mode===0?"rgba(90,240,223,.10)":"rgba(157,130,255,.11)"):(mode===0?"rgba(39,100,255,.105)":"rgba(104,82,220,.10)");
-      ctx.beginPath();ctx.arc(p.x,p.y,1.0*dpr,0,TAU);ctx.fill();
-    }
-
-    for(const cr of crystals){
-      if(!cr.alive)continue;
-      if(mode===0){
-        const critical=4.2*dpr;
-        const drive=cr.r>critical?.0046:-.0032;
-        cr.r+=drive*dt;
-        if(cr.r<.8*dpr){cr.alive=false;continue;}
-        cr.r=Math.min(cr.r,cr.max);
-        hex(cr.x,cr.y,cr.r,cr.angle,.10+Math.min(.13,cr.r/(300*dpr)));
-        if(cr.r>12*dpr)hex(cr.x,cr.y,cr.r*.66,cr.angle+.02,.06);
-      }else{
-        cr.r=Math.min(cr.max,cr.r+.0105*dt);
-        dendrite(cr,.085+Math.min(.12,cr.r/(180*dpr)));
-        if(cr.r>9*dpr)hex(cr.x,cr.y,Math.max(3*dpr,cr.r*.16),cr.angle,.07);
-      }
-    }
-    requestAnimationFrame(frame);
-  }
-  resize();addEventListener("resize",resize);requestAnimationFrame(frame);
-}
-
-$$("[data-count]").forEach(el=>{let started=false,target=+el.dataset.count,suffix=el.dataset.suffix||"",dec=+(el.dataset.decimals||0);const o=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting||started)return;started=true;let s=performance.now(),dur=1100;const tick=t=>{let p=Math.min(1,(t-s)/dur),v=target*(1-Math.pow(1-p,3));el.textContent=v.toFixed(dec)+suffix;if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick);o.disconnect()}),{threshold:.5});o.observe(el)});
-
-const fs=$$(".filter"),projects=$$(".project[data-category]");
-fs.forEach(b=>b.onclick=()=>{fs.forEach(q=>q.classList.remove("active"));b.classList.add("active");let f=b.dataset.filter;projects.forEach(p=>p.classList.toggle("hidden",f!=="all"&&p.dataset.category!==f))});
-
-const search=$("#blogSearch");
-if(search){const cards=$$(".blog");search.oninput=()=>{let q=search.value.toLowerCase().trim();cards.forEach(card=>card.style.display=(card.dataset.search||card.textContent).toLowerCase().includes(q)?"flex":"none")}};
-
-$$("[data-tilt]").forEach(card=>{if(!matchMedia("(pointer:fine)").matches)return;card.onmousemove=e=>{const r=card.getBoundingClientRect(),a=(e.clientX-r.left)/r.width-.5,b=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${-b*3}deg) rotateY(${a*4}deg) translateY(-4px)`};card.onmouseleave=()=>card.style.transform=""});
 })();
