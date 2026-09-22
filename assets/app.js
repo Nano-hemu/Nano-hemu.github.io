@@ -1,10 +1,17 @@
-(()=>{const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
-const menu=$("#menuBtn"),mobile=$("#mobileMenu");if(menu&&mobile)menu.onclick=()=>{mobile.classList.toggle("open");menu.setAttribute("aria-expanded",mobile.classList.contains("open"))};
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");io.unobserve(e.target)}}),{threshold:.1});$$(".reveal").forEach(e=>io.observe(e));
-const glow=$(".glow");if(glow&&matchMedia("(pointer:fine)").matches){addEventListener("mousemove",e=>{glow.style.left=e.clientX+"px";glow.style.top=e.clientY+"px";glow.style.opacity="1"});addEventListener("mouseleave",()=>glow.style.opacity="0")}
-const c=$("#networkCanvas");if(c&&!matchMedia("(prefers-reduced-motion:reduce)").matches){const x=c.getContext("2d");let w,h,dpr,pts;const resize=()=>{dpr=Math.min(devicePixelRatio||1,2);w=c.width=innerWidth*dpr;h=c.height=innerHeight*dpr;c.style.width=innerWidth+"px";c.style.height=innerHeight+"px";pts=Array.from({length:Math.min(55,Math.max(24,Math.floor(innerWidth/26)))},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.16*dpr,vy:(Math.random()-.5)*.16*dpr,r:(Math.random()*1.3+.45)*dpr}))};resize();addEventListener("resize",resize);(function f(){x.clearRect(0,0,w,h);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1});for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const a=pts[i],b=pts[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<150*dpr){x.strokeStyle=`rgba(90,240,223,${(1-d/(150*dpr))*.075})`;x.lineWidth=.6*dpr;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}pts.forEach(p=>{x.fillStyle="rgba(116,240,228,.27)";x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fill()});requestAnimationFrame(f)})()}
-$$("[data-count]").forEach(el=>{let started=false,target=+el.dataset.count,suffix=el.dataset.suffix||"",dec=+(el.dataset.decimals||0);const o=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting||started)return;started=true;let s=performance.now(),dur=1100;const tick=t=>{let p=Math.min(1,(t-s)/dur),v=target*(1-Math.pow(1-p,3));el.textContent=v.toFixed(dec)+suffix;if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick);o.disconnect()}),{threshold:.5});o.observe(el)});
-const fs=$$(".filter"),projects=$$(".project[data-category]");fs.forEach(b=>b.onclick=()=>{fs.forEach(q=>q.classList.remove("active"));b.classList.add("active");let f=b.dataset.filter;projects.forEach(p=>p.classList.toggle("hidden",f!=="all"&&p.dataset.category!==f))});
-const search=$("#blogSearch");if(search){const cards=$$(".blog");search.oninput=()=>{let q=search.value.toLowerCase().trim();cards.forEach(card=>card.style.display=(card.dataset.search||card.textContent).toLowerCase().includes(q)?"flex":"none")}}
-$$("[data-tilt]").forEach(card=>{if(!matchMedia("(pointer:fine)").matches)return;card.onmousemove=e=>{const r=card.getBoundingClientRect(),a=(e.clientX-r.left)/r.width-.5,b=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${-b*3}deg) rotateY(${a*4}deg) translateY(-4px)`};card.onmouseleave=()=>card.style.transform=""});
+(()=>{
+  const $=(s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
+  const root=document.documentElement;
+  const saved=localStorage.getItem('theme'); if(saved) root.dataset.theme=saved;
+  const themeBtn=$('#themeBtn');
+  const syncThemeIcon=()=>{ if(themeBtn) themeBtn.textContent=root.dataset.theme==='dark'?'☀':'◐'; };
+  syncThemeIcon();
+  if(themeBtn) themeBtn.addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',root.dataset.theme);syncThemeIcon();});
+  const menuBtn=$('#menuBtn'),mobile=$('#mobileMenu');
+  if(menuBtn&&mobile) menuBtn.addEventListener('click',()=>mobile.classList.toggle('open'));
+  const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.12});
+  $$('.reveal').forEach(el=>io.observe(el));
+  $$('[data-count]').forEach(el=>{let started=false,target=+el.dataset.count,suffix=el.dataset.suffix||'',dec=+(el.dataset.decimals||0);const o=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting||started)return;started=true;const s=performance.now(),dur=1000;const tick=t=>{const p=Math.min(1,(t-s)/dur),v=target*(1-Math.pow(1-p,3));el.textContent=v.toFixed(dec)+suffix;if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick);o.disconnect()}),{threshold:.55});o.observe(el)});
+  const filters=$$('.filter'),projects=$$('.project[data-category]');
+  filters.forEach(btn=>btn.addEventListener('click',()=>{filters.forEach(x=>x.classList.remove('active'));btn.classList.add('active');const f=btn.dataset.filter;projects.forEach(p=>p.classList.toggle('hidden',f!=='all'&&p.dataset.category!==f));}));
+  const search=$('#blogSearch'); if(search){const cards=$$('.blog-card');search.addEventListener('input',()=>{const q=search.value.toLowerCase().trim();cards.forEach(c=>c.style.display=(c.dataset.search||c.textContent).toLowerCase().includes(q)?'flex':'none')})}
 })();
