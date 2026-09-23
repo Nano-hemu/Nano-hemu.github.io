@@ -348,3 +348,129 @@ html[data-theme="dark"] .signal-row .signal strong .kpi-number{
   .signal-row .signal strong .kpi-number{font-size:44px!important}
 }
 /* FINAL KPI FORCE END */
+
+/* LOCKED ELECTROCHEMICAL TRANSPORT FEATURE */
+.transport-flow{display:none!important}
+.electro-feature{margin-top:8px;margin-bottom:22px}
+.electro-feature-head{
+  display:grid;
+  grid-template-columns:.78fr 1.22fr;
+  gap:34px;
+  align-items:end;
+  margin-bottom:18px;
+}
+.electro-feature-head h2{
+  margin:0;
+  font-size:clamp(30px,3.8vw,48px);
+  line-height:1.03;
+  letter-spacing:-.045em;
+}
+.electro-feature-head p{
+  margin:0 0 3px auto;
+  max-width:720px;
+  color:var(--muted);
+  font-size:15px;
+}
+.electro-stage{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  border:1px solid color-mix(in srgb,var(--blue) 24%,var(--line));
+  background:
+    radial-gradient(circle at 16% 42%,rgba(255,171,55,.08),transparent 25%),
+    radial-gradient(circle at 84% 42%,rgba(67,195,228,.09),transparent 25%),
+    color-mix(in srgb,var(--surface) 96%,transparent);
+  box-shadow:var(--shadow-sm);
+  padding:14px 16px 18px;
+}
+.electro-stage:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(39,100,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(39,100,255,.035) 1px,transparent 1px);
+  background-size:38px 38px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 95%);
+}
+.electro-svg{display:block;width:100%;height:auto;position:relative;z-index:1}
+.ef-wire{fill:none;stroke:color-mix(in srgb,var(--ink) 55%,transparent);stroke-width:7;stroke-linecap:round}
+.ef-load{fill:color-mix(in srgb,var(--surface-2) 90%,#10203c);stroke:color-mix(in srgb,var(--blue) 55%,var(--line));stroke-width:2}
+.ef-load-title,.ef-load-sub,.ef-top-label,.ef-electrode-title,.ef-electrode-sub,.ef-separator-label,.ef-reaction-title,.ef-reaction-sub,.ef-flow-label,.ef-ion-text{font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+.ef-load-title{font-size:15px;font-weight:850;fill:var(--ink);letter-spacing:.08em}
+.ef-load-sub{font-size:10px;font-weight:700;fill:var(--muted)}
+.ef-top-label{font-size:17px;font-weight:850;fill:var(--ink);letter-spacing:.04em}
+.ef-electrode{stroke:var(--line);stroke-width:1.8}
+.ef-anode{fill:#272d39;filter:drop-shadow(0 0 18px rgba(255,165,45,.18))}
+.ef-cathode{fill:#1d2f4c;filter:drop-shadow(0 0 18px rgba(64,171,255,.22))}
+.ef-electrode-title{font-size:22px;font-weight:900;fill:#fff;letter-spacing:.04em}
+.ef-electrode-sub{font-size:13px;font-weight:700;fill:#d7e3f4}
+.ef-electrolyte{fill:url(#electrolyteGrad);stroke:#4dc7ff;stroke-width:2.2}
+.ef-interface-anode{fill:url(#anodeGlow)}
+.ef-interface-cathode{fill:url(#cathodeGlow)}
+.ef-separator{fill:rgba(143,190,255,.19);stroke:#a8d4ff;stroke-width:2}
+.ef-separator-label{font-size:12px;font-weight:850;fill:var(--ink);letter-spacing:.12em}
+.ef-reaction-title{font-size:15px;font-weight:900;fill:#fff}
+.ef-reaction-sub{font-size:10px;font-weight:750;fill:#d4dfec}
+.ef-flow-label{font-size:12px;font-weight:820;fill:#d6e9ff;letter-spacing:.08em}
+.ef-solvent circle{fill:rgba(170,225,255,.18);stroke:rgba(190,235,255,.25);stroke-width:.7}
+.ef-electron{fill:#4fc9ff;stroke:#d8f7ff;stroke-width:1.5;filter:url(#glowBlue)}
+.ef-solvation{fill:none;stroke-width:4;stroke-dasharray:3 4;opacity:.75}
+.ef-solvation-cation{stroke:#59d2ff;filter:url(#glowBlue)}
+.ef-solvation-anion{stroke:#c57aff;filter:url(#glowViolet)}
+.ef-cation{fill:#ffc64d;stroke:#fff2b8;stroke-width:1.5;filter:url(#glowGold)}
+.ef-anion{fill:#d65cff;stroke:#f3c2ff;stroke-width:1.5;filter:url(#glowViolet)}
+.ef-ion-text{font-size:10px;font-weight:950;fill:#09101d}
+.ef-ion-text-anion{fill:#fff}
+.ef-interface-pulse{fill:none;stroke-width:4}
+.ef-pulse-left{stroke:#ffb13b;animation:interfacePulseLeft 1.6s ease-out infinite}
+.ef-pulse-right{stroke:#4dc7ff;animation:interfacePulseRight 1.6s ease-out infinite .8s}
+@keyframes interfacePulseLeft{0%{r:8;opacity:.9}100%{r:28;opacity:0}}
+@keyframes interfacePulseRight{0%{r:8;opacity:.9}100%{r:28;opacity:0}}
+.electro-legend{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:4px;
+}
+.electro-legend>div{
+  display:grid;
+  grid-template-columns:18px 1fr;
+  column-gap:9px;
+  align-items:center;
+  padding:12px 13px;
+  border-radius:16px;
+  background:color-mix(in srgb,var(--surface) 84%,transparent);
+  border:1px solid var(--line);
+}
+.electro-legend strong{font-size:11px;line-height:1.2}
+.electro-legend small{grid-column:2;color:var(--muted);font-size:9px}
+.legend-dot{width:12px;height:12px;border-radius:50%;display:block}
+.legend-dot.electron{background:#4fc9ff;box-shadow:0 0 10px #4fc9ff}
+.legend-dot.cation{background:#ffc64d;box-shadow:0 0 10px rgba(255,198,77,.7)}
+.legend-dot.anion{background:#d65cff;box-shadow:0 0 10px rgba(214,92,255,.7)}
+.legend-dot.separator{border-radius:3px;background:linear-gradient(90deg,#84b8ff,#c4ddff)}
+html[data-theme="dark"] .electro-stage{
+  background:
+    radial-gradient(circle at 16% 42%,rgba(255,171,55,.10),transparent 25%),
+    radial-gradient(circle at 84% 42%,rgba(67,195,228,.12),transparent 25%),
+    rgba(8,17,31,.72);
+}
+html[data-theme="dark"] .ef-separator-label{fill:#dce8f7}
+@media(max-width:980px){
+  .electro-feature-head{grid-template-columns:1fr}
+  .electro-feature-head p{margin-left:0}
+  .electro-legend{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  .electro-feature{margin-top:0}
+  .electro-stage{padding:8px 8px 12px;border-radius:20px}
+  .electro-feature-head h2{font-size:30px}
+  .electro-feature-head p{font-size:13px}
+  .electro-svg{min-width:760px}
+  .electro-stage{overflow-x:auto}
+  .electro-legend{grid-template-columns:1fr 1fr}
+}
