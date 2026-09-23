@@ -534,3 +534,41 @@ html[data-theme="dark"] .el-separator-label{fill:#eaf4ff}
   .electro-stage-locked{overflow-x:auto}
   .electro-svg-locked{min-width:980px}
 }
+
+/* DARK DEFAULT EMPHASIS START */
+html[data-theme="dark"] .accent{
+  color:#7fa5ff!important;
+  opacity:1!important;
+  text-shadow:0 0 20px rgba(93,137,255,.20);
+}
+html[data-theme="dark"] .signal-row .signal{
+  background:linear-gradient(145deg,rgba(19,43,79,.96),rgba(12,26,49,.96))!important;
+  border-color:rgba(101,145,255,.24)!important;
+}
+html[data-theme="dark"] .signal-row .signal strong,
+html[data-theme="dark"] .signal-row .signal strong span,
+html[data-theme="dark"] .signal-row .signal strong .kpi-number,
+html[data-theme="dark"] .signal-row .signal [data-count]{
+  color:#5f91ff!important;
+  opacity:1!important;
+  font-weight:950!important;
+  text-shadow:0 0 24px rgba(73,121,255,.20)!important;
+}
+html[data-theme="dark"] .bento-card .index,
+html[data-theme="dark"] .project .ptype,
+html[data-theme="dark"] .blog-kind,
+html[data-theme="dark"] .kicker,
+html[data-theme="dark"] .eyebrow{
+  color:#82a9ff!important;
+  opacity:1!important;
+  font-weight:900!important;
+}
+html[data-theme="dark"] .bento-card .watermark{
+  color:rgba(80,116,214,.24)!important;
+  opacity:1!important;
+}
+html[data-theme="dark"] .hero-copy,
+html[data-theme="dark"] .section-copy{
+  color:#b5c5dc!important;
+}
+/* DARK DEFAULT EMPHASIS END */
