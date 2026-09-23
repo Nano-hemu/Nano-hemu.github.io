@@ -1,7 +1,7 @@
 (()=>{
   const $=(s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
   const root=document.documentElement;
-  const saved=localStorage.getItem('theme'); if(saved) root.dataset.theme=saved;
+  const themeVersion='dark-default-20260923'; const savedVersion=localStorage.getItem('theme-version'); if(savedVersion!==themeVersion){root.dataset.theme='dark';localStorage.setItem('theme','dark');localStorage.setItem('theme-version',themeVersion);}else{const saved=localStorage.getItem('theme');root.dataset.theme=saved||'dark';}
   const themeBtn=$('#themeBtn');
   const syncThemeIcon=()=>{ if(themeBtn) themeBtn.textContent=root.dataset.theme==='dark'?'☀':'◐'; };
   syncThemeIcon();
