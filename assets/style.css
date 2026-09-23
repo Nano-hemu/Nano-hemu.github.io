@@ -474,3 +474,63 @@ html[data-theme="dark"] .ef-separator-label{fill:#dce8f7}
   .electro-stage{overflow-x:auto}
   .electro-legend{grid-template-columns:1fr 1fr}
 }
+
+/* LOCKED VISUAL MATCH, BOTTOM ELECTROCHEMICAL FEATURE */
+.electro-section{padding-top:24px;padding-bottom:28px}
+.electro-stage-locked{
+  background:
+    radial-gradient(circle at 15% 48%,rgba(255,170,55,.10),transparent 24%),
+    radial-gradient(circle at 85% 48%,rgba(70,190,255,.11),transparent 24%),
+    linear-gradient(180deg,color-mix(in srgb,var(--surface) 94%,transparent),color-mix(in srgb,var(--surface-2) 88%,transparent));
+  overflow:hidden;
+}
+html[data-theme="dark"] .electro-stage-locked{
+  background:
+    radial-gradient(circle at 15% 48%,rgba(255,170,55,.12),transparent 24%),
+    radial-gradient(circle at 85% 48%,rgba(70,190,255,.14),transparent 24%),
+    linear-gradient(180deg,rgba(8,17,31,.96),rgba(10,21,39,.92));
+}
+.electro-svg-locked{filter:saturate(1.08) contrast(1.03)}
+.el-wire-heavy{fill:none;stroke:#5c6470;stroke-width:16;stroke-linecap:round}
+.el-wire-highlight{fill:none;stroke:#d9ecff;stroke-width:3;stroke-linecap:round;opacity:.82}
+.el-load-locked{fill:#132039;stroke:#6395ff;stroke-width:2.5}
+.el-load-title{font-size:18px;font-weight:900;fill:#fff;letter-spacing:.08em}
+.el-load-sub{font-size:11px;font-weight:700;fill:#9fb4cd}
+.el-head-label{font-size:21px;font-weight:900;fill:var(--ink);letter-spacing:.04em}
+html[data-theme="dark"] .el-head-label{fill:#eaf4ff}
+.el-electrode-title{font-size:28px;font-weight:950;fill:#fff;letter-spacing:.04em}
+.el-electrode-sub{font-size:15px;font-weight:700;fill:#d5dfec}
+.el-metal-atoms circle{fill:#697384;stroke:#dce7f7;stroke-width:1.2}
+.el-metal-atoms-left circle{filter:drop-shadow(0 0 8px rgba(255,171,55,.75))}
+.el-metal-atoms-right circle{filter:drop-shadow(0 0 8px rgba(65,190,255,.75))}
+.el-separator-label{font-size:13px;font-weight:900;fill:var(--ink);letter-spacing:.12em}
+html[data-theme="dark"] .el-separator-label{fill:#eaf4ff}
+.el-reaction-main{font-size:16px;font-weight:950;fill:#fff}
+.el-reaction-sub{font-size:10px;font-weight:750;fill:#e0ebf7}
+.el-solvent circle{fill:rgba(184,232,255,.18);stroke:rgba(212,243,255,.27);stroke-width:.8}
+.el-electron{fill:#4fcfff;stroke:#e1f9ff;stroke-width:2;filter:url(#blueGlow)}
+.el-solvation-shell circle{opacity:.9}
+.el-cation-shell circle{fill:#59d2ff;filter:url(#blueGlow)}
+.el-anion-shell circle{fill:#d879ff;filter:url(#purpleGlow)}
+.el-cation-core{filter:url(#goldGlow)}
+.el-anion-core{filter:url(#purpleGlow)}
+.el-ion-label{font-size:11px;font-weight:950;fill:#0b1220}
+.el-ion-label-light{fill:#fff}
+.el-flow-arrows text{font-size:31px;font-weight:950}
+.el-flow-arrows-cation text{fill:#f6fbff;filter:url(#blueGlow)}
+.el-flow-arrows-anion text{fill:#f0a2ff;filter:url(#purpleGlow)}
+.el-interface-pulse{fill:none;stroke-width:5}
+.el-interface-pulse-left{stroke:#ffb13b;animation:lockedPulse 1.5s ease-out infinite}
+.el-interface-pulse-right{stroke:#5bd4ff;animation:lockedPulse 1.5s ease-out infinite .75s}
+@keyframes lockedPulse{0%{r:10;opacity:.95}100%{r:38;opacity:0}}
+.electro-legend-locked{margin-top:-4px}
+.electro-feature{margin-top:0;margin-bottom:0}
+@media(max-width:980px){
+  .electro-section{padding-top:16px}
+}
+@media(max-width:650px){
+  .electro-section{padding-top:8px;padding-bottom:18px}
+  .electro-feature-head{margin-bottom:14px}
+  .electro-stage-locked{overflow-x:auto}
+  .electro-svg-locked{min-width:980px}
+}
